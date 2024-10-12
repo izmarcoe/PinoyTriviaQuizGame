@@ -18,6 +18,7 @@ main {
     width: 50%;
     border-radius: 15px;
     margin: 0 auto; /* Center horizontally */
+    margin-bottom: 15px;
 }
 
 .container {

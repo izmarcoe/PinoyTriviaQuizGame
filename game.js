@@ -1,55 +1,88 @@
 const questions = [
     {
-        question: "What is the capital of France?",
-        choices: ["Paris", "London", "Berlin", "Madrid"]
-    },
-    {
-        question: "What is 2 + 2?",
-        choices: ["3", "4", "5", "6"]
-    },
-    {
-        question: "Who wrote 'To Kill a Mockingbird'?",
-        choices: ["Harper Lee", "Mark Twain", "Ernest Hemingway", "F. Scott Fitzgerald"]
-    },
-    {
-        question: "What is the largest planet in our solar system?",
-        choices: ["Earth", "Mars", "Jupiter", "Saturn"]
-    },
-    {
-        question: "What is the boiling point of water?",
-        choices: ["90°C", "100°C", "110°C", "120°C"]
-    },
-    {
         question: "Who was the first president of the Philippines?",
-        choices: ["Emilio Aguinaldo", "Manuel L. Quezon", "Jose P. Laurel", "Ferdinand Marcos"]
+        choices: ["Emilio Aguinaldo", "Manuel L. Quezon", "Jose P. Laurel", "Ferdinand Marcos"],
+        correct: "Emilio Aguinaldo"
     },
     {
         question: "What is the revolution that happened in the Philippines during the Marcos Sr. regime?",
-        choices: ["Spanish Revolution", "Katipunan Revolution", "EDSA People Power Revolution", "Revolution of 1896"]
+        choices: ["Spanish Revolution", "Katipunan Revolution", "EDSA People Power Revolution", "Revolution of 1896"],
+        correct: "EDSA People Power Revolution"
     },
     {
         question: "Who is the head of the Katipunan?",
-        choices: ["Andres Bonifacio", "Emilio Aguinaldo", "Jose Rizal", "Antonio Luna"]
+        choices: ["Andres Bonifacio", "Emilio Aguinaldo", "Jose Rizal", "Antonio Luna"],
+        correct: "Andres Bonifacio"
+    },
+    {
+        question: "Which festival is celebrated in Baguio City?",
+        choices: ["Higantes Festival", "Pahiyas Festival", "Sinulog Festival", "Panagbenga Festival"],
+        correct: "Panagbenga Festival"
     }
 ];
+
+let currentQuestionIndex = 0;
+let correctAnswers = 0;
+let incorrectAnswers = 0;
+const totalQuestions = 10;
 
 function getRandomQuestion() {
     const randomIndex = Math.floor(Math.random() * questions.length);
     return questions[randomIndex];
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+function displayQuestion(question) {
     const questionElement = document.querySelector(".question");
     const choicesElement = document.querySelector(".choices");
 
-    const randomQuestion = getRandomQuestion();
-    questionElement.textContent = randomQuestion.question;
-
+    questionElement.textContent = question.question;
     choicesElement.innerHTML = "";
-    randomQuestion.choices.forEach(choice => {
+
+    question.choices.forEach(choice => {
         const choiceElement = document.createElement("li");
         choiceElement.classList.add("choice-button");
         choiceElement.textContent = choice;
+        choiceElement.addEventListener("click", () => handleChoiceSelection(choice, question.correct));
         choicesElement.appendChild(choiceElement);
     });
+}
+
+function handleChoiceSelection(selectedChoice, correctChoice) {
+    const choicesElement = document.querySelector(".choices");
+    const choiceElements = choicesElement.querySelectorAll(".choice-button");
+
+    choiceElements.forEach(choiceElement => {
+        if (choiceElement.textContent === correctChoice) {
+            choiceElement.classList.add("correct");
+        } else if (choiceElement.textContent === selectedChoice) {
+            choiceElement.classList.add("incorrect");
+        }
+    });
+
+    if (selectedChoice === correctChoice) {
+        correctAnswers++;
+    } else {
+        incorrectAnswers++;
+    }
+
+    setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < totalQuestions) {
+            displayQuestion(getRandomQuestion());
+        } else {
+            displayResults();
+        }
+    }, 1000);
+}
+
+function displayResults() {
+    const questionElement = document.querySelector(".question");
+    const choicesElement = document.querySelector(".choices");
+
+    questionElement.textContent = `Quiz Over! Correct: ${correctAnswers}, Incorrect: ${incorrectAnswers}`;
+    choicesElement.innerHTML = "";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    displayQuestion(getRandomQuestion());
 });
